@@ -1,11 +1,13 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\IssueController;
 use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PermissionController;
 
 Route::get('/', function () {
     return redirect('login');
@@ -31,6 +33,12 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('issue', IssueController::class);
+});
+Route::middleware(['auth'])->group(function () {
+    Route::resource('permission', PermissionController::class);
+});
+Route::middleware(['auth'])->group(function () {
+    Route::resource('role', RoleController::class);
 });
 
 
