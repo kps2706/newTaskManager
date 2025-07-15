@@ -28,23 +28,30 @@
                 </a>
                 <!-- Sidenav Heading (Addons)-->
                 <div class="sidenav-menu-heading">Admin Menu</div>
+                @can('user.view')
                 <!-- Sidenav Link (Charts)-->
                 <a class="nav-link" href="{{route('user.index')}}">
                     <div class="nav-link-icon"><i data-feather="users"></i></div>
                     Users
                 </a>
+                @endcan
+                @can('module.view')
                 <!-- Sidenav Link (Tables)-->
                 <a class="nav-link" href="{{route('module.index')}}">
                     <div class="nav-link-icon"><i data-feather="check-square"></i></div>
                     Module
                 </a>
+                @endcan
                 <!-- Sidenav Heading (Addons)-->
                 <div class="sidenav-menu-heading">Operation Menu</div>
+                <!-- Incident -->
+                @can('issue.view')
                 <!-- Sidenav Link (Charts)-->
                 <a class="nav-link" href="{{route('issue.index')}}">
                     <div class="nav-link-icon"><i data-feather="flag"></i></div>
                     Incident
                 </a>
+                @endcan
             </div>
         </div>
         <!-- Sidenav Footer-->
@@ -52,6 +59,7 @@
             <div class="sidenav-footer-content">
                 <div class="sidenav-footer-subtitle">Logged in as:</div>
                 <div class="sidenav-footer-title">{{Auth::user()->name ?? 'Guest'}}</div>
+                <div class="sidenav-footer-subtitle">Role : {{Auth::user()->role ?? 'no role'}}</div>
             </div>
         </div>
     </nav>
