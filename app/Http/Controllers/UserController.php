@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Mail\UserCreatedMail;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 
 class UserController extends Controller
@@ -38,20 +43,29 @@ class UserController extends Controller
         $valid_user = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6',
             'roles' => 'required|array',
             'roles.*' => 'exists:roles,name', // Validate each role exists in the roles table
 
         ]);
 
-        User::create([
+        $tempPassword = Str::random(10);
+
+         $user = User::create([
             'name' => $valid_user['name'],
             'email' => $valid_user['email'],
-            'password' => bcrypt($valid_user['password']),
+            'password' => bcrypt($tempPassword),
+            'force_password_reset' => true,
         ]);
 
         // Assign selected role(s), or 'reporter' if none provided
         $user->syncRoles($valid_user['roles'] ?? ['reporter']);
+
+        try {
+            Mail::to($user->email)->send(new UserCreatedMail($user, $tempPassword));
+            Log::info("User creation email sent to {$user->email}");
+        } catch (Exception $e) {
+            Log::error("Failed to send mail to {$user->email}: " . $e->getMessage());
+        }
 
         return redirect()->route('user.index')->with('success', 'User created successfully.');
     }

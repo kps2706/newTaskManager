@@ -2,15 +2,20 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
+use Exception;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Mail\UserCreatedMail;
+use Illuminate\Validation\Rules;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
-use Illuminate\View\View;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Auth\Events\Registered;
 
 class RegisteredUserController extends Controller
 {
@@ -32,19 +37,36 @@ class RegisteredUserController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'roles' => 'required|array',
+            'roles.*' => 'exists:roles,name', // Validate each role exists in the roles table
+
         ]);
+
+        // Generate random password
+        $tempPassword = Str::random(10);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => Hash::make($tempPassword),
+            'force_password_change' => true, // Force password change on first login
         ]);
 
-        event(new Registered($user));
+        // Assign default role if needed
+        $user->syncRoles($request['roles'] ?? ['reporter']);
 
-        Auth::login($user);
+        try {
+        // 📧 Send mail with temporary password
+            Mail::to($user->email)->send(new UserCreatedMail($user, $tempPassword));
+            Log::info("User creation email sent to {$user->email}");
+        } catch (Exception $e) {
+            Log::error("Failed to send mail to {$user->email}: " . $e->getMessage());
+        }
+        // event(new Registered($user));
 
-        return redirect(route('dashboard', absolute: false));
+        // Auth::login($user);
+
+        return redirect(route('login'))->with('success', 'Account created successfully! Please check your email for login details.');
+
     }
 }

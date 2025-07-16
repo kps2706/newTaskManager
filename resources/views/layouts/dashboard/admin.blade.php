@@ -1,7 +1,11 @@
 @extends('layouts.app')
 
 @section('main_content')
-
+    @if (session('success'))
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded mb-4">
+            {{ session('success') }}
+        </div>
+    @endif
 <main>
     <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
         <div class="container-xl px-4">
@@ -27,6 +31,7 @@
 
     <!-- Main page content-->
     <div class="container-xl px-4 mt-n10">
+
         {{-- First Row Data tiles --}}
         {{-- <div class="row">
             <div class="col-xxl-4 col-xl-12 mb-4">

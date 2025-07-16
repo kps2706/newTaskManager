@@ -8,6 +8,7 @@ use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\ForcePasswordResetController;
 
 Route::get('/', function () {
     return redirect('login');
@@ -45,4 +46,9 @@ Route::middleware(['auth'])->group(function () {
 //Dashboard Controller code
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
+
+
+
+Route::get('/force-reset-password', [ForcePasswordResetController::class, 'show'])->name('force.password.reset');
+Route::post('/force-reset-password', [ForcePasswordResetController::class, 'update'])->name('force.password.update');
 
