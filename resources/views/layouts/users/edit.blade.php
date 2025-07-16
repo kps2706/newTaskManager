@@ -30,10 +30,21 @@
                 <!-- Account details card-->
                 <div class="card mb-4">
                     <div class="card-header">Account Details</div>
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
                     <div class="card-body">
                         <form method="POST" action="{{ route('user.update', $user->id)}}">
+                            @method('PUT')
                         @csrf
-                        @method('put')
+
                             <!-- Form Row-->
                                 <!-- Form Group (first name)-->
                                 <div class="mb-3">
@@ -47,13 +58,17 @@
                                 </div>
                                 <div class="mb-3">
                                 <label class="small mb-1">Role</label>
-                                    <select class="form-select" aria-label="Default select example" name="role" id="role">
-                                        <option disabled {{ $user->role ? '' : 'selected' }}>Select a role:</option>
-                                        <option value="Reporter" {{ $user->role == 'reporter' ? 'selected' : '' }}>Reporter</option>
-                                        <option value="Admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
-                                        <option value="Vendor" {{ $user->role == 'vendor' ? 'selected' : '' }}>Vendor</option>
+                                    <select class="form-select" aria-label="Default select example" name="roles[]" id="roles">
+                                        @php
+                                            $currentRole = $user->getRoleNames()->first();  // 🔁 Get user's Spatie-assigned role
+                                        @endphp
+                                        <option disabled>Select a role:</option>
+                                        <option value="reporter" {{ $currentRole == 'reporter' ? 'selected' : '' }}>Reporter</option>
+                                        <option value="admin" {{ $currentRole == 'admin' ? 'selected' : '' }}>Admin</option>
+                                        <option value="vendor" {{ $currentRole == 'vendor' ? 'selected' : '' }}>Vendor</option>
+                                        <option value="super_admin" {{ $currentRole == 'super_admin' ? 'selected' : '' }}>Super Admin</option>
                                     </select>
-                                </div>  
+                                </div>
                                 <!-- Form Group (first name)-->
                                 <div class="mb-3">
                                     <label class="small mb-1" for="password">Password</label>
@@ -64,7 +79,7 @@
                                     <label class="small mb-1" for="password_confirmation">Confirm Password</label>
                                     <input class="form-control" id="password_confirmation" name="password_confirmation" type="password" placeholder="Confirm your password" value="" />
                                 </div>
-                           
+
                             <!-- Submit button-->
                             <button class="btn btn-primary" type="submit">Save Changes</button>
                         </form>

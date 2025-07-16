@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
+
 
 class UserController extends Controller
 {
@@ -13,7 +15,7 @@ class UserController extends Controller
     public function index()
     {
         //Fetch all users
-        $users = User::all(); 
+        $users = User::with('roles')->get();
         return view('layouts.users.index', compact('users'));
     }
 
@@ -23,7 +25,8 @@ class UserController extends Controller
     public function create()
     {
         //
-        return view('layouts.users.create');
+        $roles = Role::pluck('name', 'name'); // or just ->pluck('name')
+        return view('layouts.users.create', compact('roles'));
     }
 
     /**
@@ -36,15 +39,19 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:6',
-            'role' => 'nullable|in:Reporter,Admin,Vendor,Super_Admin',
+            'roles' => 'required|array',
+            'roles.*' => 'exists:roles,name', // Validate each role exists in the roles table
+
         ]);
 
         User::create([
             'name' => $valid_user['name'],
             'email' => $valid_user['email'],
             'password' => bcrypt($valid_user['password']),
-            'role' => $valid_user['role'] ?? 'reporter', // default role if null
         ]);
+
+        // Assign selected role(s), or 'reporter' if none provided
+        $user->syncRoles($valid_user['roles'] ?? ['reporter']);
 
         return redirect()->route('user.index')->with('success', 'User created successfully.');
     }
@@ -64,7 +71,9 @@ class UserController extends Controller
     {
         //
         $user = User::findorfail($id);
-        return view('layouts.users.edit', compact('user'));
+        $roles = Role::all();
+        $userRoles = $user->roles->pluck('name')->toArray(); // currently assigned roles
+        return view('layouts.users.edit', compact('user', 'roles', 'userRoles'));
     }
 
     /**
@@ -73,30 +82,37 @@ class UserController extends Controller
     public function update(Request $request, string $id)
     {
         //
-        $for_update_user = User::findorfail($id);
+        $user = User::findOrFail($id);
 
-        // dd($for_update_user); print find object
-
-         // Step 2: Validate the form input
-         $valid_user = $request->validate([
+        // Validate inputs except password
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $for_update_user->id,
-            'role' =>'nullable|in:Reporter,Admin,Vendor',
-         ]);
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'roles' => 'required|array',
+            'roles.*' => 'exists:roles,name',
+        ]);
 
-        // Update name, email, and role
-        $for_update_user->name = $valid_user['name'];
-        $for_update_user->email = $valid_user['email'];
-        $for_update_user->role = $valid_user['role'] ?? $user->role;
+        // dd($validated);
 
-        // update password only if provided
-        if(!empty($valid_user['password'])){
-            $for_update_user->password = bcrypt($valid_user['password']);
-        };
+        // Always update these fields
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
 
-        $for_update_user->save();
+        // Conditionally update password
+        if ($request->filled('password')) {
+            $request->validate([
+                'password' => 'string|min:6|confirmed',
+            ]);
 
-        return redirect()->route('user.index')->with('success','User Updated Successfully');
+            $user->password = bcrypt($request->input('password'));
+        }
+
+        $user->save();
+
+        // Sync roles
+        $user->syncRoles($validated['roles']);
+
+        return redirect()->route('user.index')->with('success', 'User updated successfully.');
     }
 
     /**

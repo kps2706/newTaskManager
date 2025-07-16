@@ -46,13 +46,13 @@
                                 </div>
                                 <div class="mb-3">
                                 <label class="small mb-1">Role</label>
-                                    <select class="form-select" aria-label="Default select example" name="role" id="role">
-                                        <option selected disabled>Select a role:</option>
-                                        <option value="Reporter">Reporter</option>
-                                        <option value="Admin">Admin</option>
-                                        <option value="Vendor">Vendor</option>
+                                    <select class="form-select" aria-label="Default select example" name="roles[]" id="roles">
+                                        <option disabled selected>Select a role</option>
+                                        @foreach($roles as $role)
+                                            <option value="{{ $role }}">{{ ucfirst(str_replace('_', ' ', $role)) }}</option>
+                                        @endforeach
                                     </select>
-                                </div>  
+                                </div>
                                 <!-- Form Group (first name)-->
                                 <div class="mb-3">
                                     <label class="small mb-1" for="password">Password</label>
@@ -63,7 +63,7 @@
                                     <label class="small mb-1" for="password_confirmation">Confirm Password</label>
                                     <input class="form-control" id="password_confirmation" name="password_confirmation" type="password" placeholder="Confirm your password" value="" />
                                 </div>
-                           
+
                             <!-- Submit button-->
                             <button class="btn btn-primary" type="submit">Add user</button>
                         </form>

@@ -26,6 +26,8 @@
                     <div class="nav-link-icon"><i data-feather="activity"></i></div>
                     Dashboard
                 </a>
+                @canany(['user-list', 'role-list', 'permission-list', 'module-list'])
+
                 <!-- Sidenav Heading (Addons)-->
                 <div class="sidenav-menu-heading">Admin Menu</div>
                 @can('user-list')
@@ -35,14 +37,19 @@
                     Users
                 </a>
                 @endcan
-                <a class="nav-link" href="{{route('role.index')}}">
+                @can('role-list')
+                    <a class="nav-link" href="{{route('role.index')}}">
                     <div class="nav-link-icon"><i data-feather="users"></i></div>
                     Role
                 </a>
-                <a class="nav-link" href="{{route('permission.index')}}">
+                @endcan
+                @can('permission-list')
+                    <a class="nav-link" href="{{route('permission.index')}}">
                     <div class="nav-link-icon"><i data-feather="users"></i></div>
                     Permission
                 </a>
+                @endcan
+
                 @can('module-list')
                 <!-- Sidenav Link (Tables)-->
                 <a class="nav-link" href="{{route('module.index')}}">
@@ -50,10 +57,12 @@
                     Module
                 </a>
                 @endcan
+
+                @endcanany
                 <!-- Sidenav Heading (Addons)-->
                 <div class="sidenav-menu-heading">Operation Menu</div>
                 <!-- Incident -->
-                @can('issue.view')
+                @can('issue-list')
                 <!-- Sidenav Link (Charts)-->
                 <a class="nav-link" href="{{route('issue.index')}}">
                     <div class="nav-link-icon"><i data-feather="flag"></i></div>
@@ -67,7 +76,13 @@
             <div class="sidenav-footer-content">
                 <div class="sidenav-footer-subtitle">Logged in as:</div>
                 <div class="sidenav-footer-title">{{Auth::user()->name ?? 'Guest'}}</div>
-                <div class="sidenav-footer-subtitle">Role : {{ Auth::user()->getRoleNames()->implode(', ') ?? 'No Role' }}</div>
+                <div class="sidenav-footer-subtitle">Role :
+                @php
+                    $role = Auth::user()?->getRoleNames()->first();
+                @endphp
+
+                {{ $role ? ucfirst(str_replace('_', ' ', $role)) : 'No Role' }}
+                </div>
             </div>
         </div>
     </nav>

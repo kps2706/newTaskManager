@@ -58,23 +58,21 @@
                                 </div>
                             </td>
                             <td>{{ $user->email }}</td>
-                            <td>        
-                            @switch($user->role)
-                                @case('vendor')
-                                    <span class="badge bg-yellow-soft text-yellow">Vendor</span>
-                                    @break
-                                @case('reporter')
-                                    <span class="badge bg-blue-soft text-blue">Reporter</span>
-                                    @break
-                                @case('admin')
-                                    <span class="badge bg-red-soft text-red">Admin</span>
-                                    @break
-                                @case('super_admin')
-                                    <span class="badge bg-purple-soft text-purple">Super Admin</span>
-                                    @break
-                                @default
-                                    <span class="badge bg-secondary">Unknown</span>
-                            @endswitch
+                            <td>
+                                @php
+                                    $role = $user->getRoleNames()->first();
+                                    $roleColor = match($role) {
+                                        'vendor' => 'yellow',
+                                        'reporter' => 'blue',
+                                        'admin' => 'red',
+                                        'super_admin' => 'purple',
+                                        default => 'secondary'
+                                    };
+                                @endphp
+
+                                <span class="badge bg-{{ $roleColor }}-soft text-{{ $roleColor }}">
+                                    {{ $role ? ucfirst(str_replace('_', ' ', $role)) : 'No Role' }}
+                                </span>
                             </td>
                             {{-- <td>
                                 <span class="badge bg-green-soft text-green">Sales</span>
@@ -86,11 +84,15 @@
                             <td>{{ $user->created_at->format('d-m-Y') }}</td>
                             <td>
                              <div class="d-flex align-items-center gap-2">
+                                @can('user-edit')
                                 <a class="btn btn-datatable btn-icon btn-transparent-dark me-2" title="Edit user" href="{{route('user.edit', $user->id)}}"><i data-feather="edit"></i></a>
+                                @endcan
+                                @can('user-delete')
                                 <form action="{{ route('user.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this user?');">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-datatable btn-icon btn-transparent-dark" title="Delete user"><i data-feather="trash-2"></i></button>
+                                @endcan
                                 </form>
                             </div>
                             </td>
