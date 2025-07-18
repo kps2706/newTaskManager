@@ -24,28 +24,28 @@ Route::middleware('auth')->group(function () {
 require __DIR__.'/auth.php';
 
 //Protected Resources with Role Middleware
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth','verified'])->group(function () {
     Route::resource('user', UserController::class);
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth','verified'])->group(function () {
     Route::resource('module', ModuleController::class);
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth','verified'])->group(function () {
     Route::resource('issue', IssueController::class);
 });
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth','verified'])->group(function () {
     Route::resource('permission', PermissionController::class);
 });
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth','verified'])->group(function () {
     Route::resource('role', RoleController::class);
 });
 
 
 //Dashboard Controller code
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware(['auth','verified']);
 
 
 

@@ -69,16 +69,6 @@
                                         <option value="super_admin" {{ $currentRole == 'super_admin' ? 'selected' : '' }}>Super Admin</option>
                                     </select>
                                 </div>
-                                <!-- Form Group (first name)-->
-                                <div class="mb-3">
-                                    <label class="small mb-1" for="password">Password</label>
-                                    <input class="form-control" id="password" name="password" type="password" placeholder="Enter your password" value="" />
-                                </div>
-                                <!-- Form Group (last name)-->
-                                <div class="mb-3">
-                                    <label class="small mb-1" for="password_confirmation">Confirm Password</label>
-                                    <input class="form-control" id="password_confirmation" name="password_confirmation" type="password" placeholder="Confirm your password" value="" />
-                                </div>
 
                             <!-- Submit button-->
                             <button class="btn btn-primary" type="submit">Save Changes</button>

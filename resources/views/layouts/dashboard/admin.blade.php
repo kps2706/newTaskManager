@@ -1,11 +1,5 @@
 @extends('layouts.app')
-
 @section('main_content')
-    @if (session('success'))
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded mb-4">
-            {{ session('success') }}
-        </div>
-    @endif
 <main>
     <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
         <div class="container-xl px-4">
@@ -16,7 +10,7 @@
                             <div class="page-header-icon"><i data-feather="activity"></i></div>
                             Dashboard
                         </h1>
-                        <div class="page-header-subtitle">Overview of system activity, user engagement, and reported incidents.</div>
+                        <div class="page-header-subtit le">Overview of system activity, user engagement, and reported incidents.</div>
                     </div>
                     {{-- <div class="col-12 col-xl-auto mt-4">
                         <div class="input-group input-group-joined border-0" style="width: 16.5rem">

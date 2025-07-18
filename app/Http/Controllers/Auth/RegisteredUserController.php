@@ -62,7 +62,8 @@ class RegisteredUserController extends Controller
         } catch (Exception $e) {
             Log::error("Failed to send mail to {$user->email}: " . $e->getMessage());
         }
-        // event(new Registered($user));
+
+        event(new Registered($user)); // This triggers Laravel's built-in email verification
 
         // Auth::login($user);
 

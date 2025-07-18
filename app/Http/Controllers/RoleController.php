@@ -61,6 +61,11 @@ class RoleController extends Controller
     public function edit(string $id)
     {
         //
+        $role = Role::findOrFail($id);
+        $permissions = Permission::all();
+        $rolePermissions = $role->permissions->pluck('name')->toArray();
+
+        return view('layouts.roles.edit', compact('role', 'permissions', 'rolePermissions'));
     }
 
     /**
@@ -69,6 +74,18 @@ class RoleController extends Controller
     public function update(Request $request, string $id)
     {
         //
+        $request->validate([
+        'name' => 'required|unique:roles,name,' . $id,
+        'permissions' => 'array',
+        ]);
+
+        $role = Role::findOrFail($id);
+        $role->name = $request->name;
+        $role->save();
+
+        $role->syncPermissions($request->permissions ?? []);
+
+        return redirect()->route('role.index')->with('success', 'Role updated successfully.');
     }
 
     /**
@@ -77,5 +94,14 @@ class RoleController extends Controller
     public function destroy(string $id)
     {
         //
+        $role = Role::findOrFail($id);
+
+        if (in_array($role->name, ['super_admin'])) {
+            return redirect()->route('role.index')->with('error', 'Cannot delete super admin role.');
+        }
+
+        $role->delete();
+
+        return redirect()->route('role.index')->with('success', 'Role deleted successfully.');
     }
 }
