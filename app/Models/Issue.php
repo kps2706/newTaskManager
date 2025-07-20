@@ -48,4 +48,10 @@ class Issue extends Model
     {
         return $this->hasMany(Attachment::class);
     }
+
+    public function statusLogs()
+    {
+        return $this->hasMany(IssueStatusLog::class);
+    }
+
 }

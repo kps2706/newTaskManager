@@ -38,6 +38,7 @@
                         <p><strong>Module:</strong> {{ $issue->module->name ?? '-' }}</p>
                         <p><strong>Title:</strong> {{ $issue->title }}</p>
                         <p><strong>Description:</strong> {{ $issue->description }}</p>
+                        <p><strong>Reported By:</strong> {{ $issue->reporter->name ?? '-' }}</p>
                         <p><strong>Priority:</strong> {{ $issue->priority }}</p>
                         <p><strong>Status:</strong> {{ $issue->status }}</p>
                         <p><strong>Issue Date:</strong> {{ $issue->reported_date->format('d M Y') }}</p>

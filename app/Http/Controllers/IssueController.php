@@ -20,7 +20,7 @@ class IssueController extends Controller
         $user = Auth::user();
         $role = Auth::user()->getRoleNames()->first();
 
-        if ($role === 'admin') {
+        if ($role === 'admin' || $role === 'super_admin') {
             $issues = Issue::with('module', 'reporter')->latest()->get();
         } elseif ($role === 'vendor') {
             $issues = Issue::with('module', 'reporter')

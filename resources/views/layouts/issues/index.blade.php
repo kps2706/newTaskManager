@@ -16,7 +16,7 @@
             </div>
             <div class="col-12 col-xl-auto mt-4">
                 <a class="btn btn-sm btn-light text-primary" href="{{route('issue.create')}}">
-                    <i class="me-1" data-feather="user-plus"></i>
+                    <i class="me-1" data-feather="flag"></i>
                     Report New Issue
                 </a>
             </div>
@@ -100,7 +100,7 @@
                             <td>
                              <div class="d-flex align-items-center gap-2">
                                 <a class="btn btn-datatable btn-icon btn-transparent-dark me-2" title="Edit user" href="{{route('issue.edit', $issue->id)}}"><i data-feather="edit"></i></a>
-                                @role('super-admin')
+                                @role('super_admin')
                                 <form action="{{ route('issue.destroy', $issue->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this issue?');">
                                     @csrf
                                     @method('DELETE')
