@@ -56,8 +56,8 @@
                                         @foreach($modules as $module)
                                         <option value="{{$module->id}}">{{$module->name}}</option>
                                         @endforeach
-                                        
-                                    </select>                            
+
+                                    </select>
                                     </div>
                             <div class="col-md-8">
                                     <label class="small mb-1" for="title">Incident Title</label>
@@ -80,36 +80,24 @@
                                     </select>
                                 </div>
                                 </div>
-                                <div class="row gx-3 mb-3">  
+                                <div class="row gx-3 mb-3">
                                 <div class="col-md-6">
-                              
+
                                     <label class="small mb-1" for="reported_date">Reported Date</label>
                                     <input class="form-control" id="reported_date" name="reported_date" type="date" value="" />
-                            
+
                                 </div>
                                  <div class="col-md-6">
-                                    <label class="small mb-1" for="sla_due_date">SLA Due Date</label>
-                                    <input class="form-control" id="sla_due_date" name="sla_due_date" type="date" value="" />
+                                    <label class="small mb-1" for="closed_date">Close Date</label>
+                                    <input class="form-control" id="closed_date" name="closed_date" type="date" value="" />
                                  </div>
-                                {{-- <label class="small mb-1">Status</label>
-                                    <select class="form-select" aria-label="Default select example" name="status" id="status">
-                                        <option selected disabled>Select a status:</option>
-                                        <option value="new">New</option>
-                                        <option value="assigned">Assigned</option>
-                                        <option value="in_progress">In Progressr</option>
-                                        <option value="resolved">Resolved</option>
-                                        <option value="closed">Closed</option>
-                                    </select> --}}
-                                
-                                </div>  
+
+                                </div>
                                 <!-- Form Group (first name)-->
                                 <div class="row gx-3 mb-3">
-                                {{-- <div class="col-md-6">
-                                    <label class="small mb-1" for="sla_due_date">SLA Due Date</label>
-                                    <input class="form-control" id="sla_due_date" name="sla_due_date" type="date" placeholder="Enter your password" value="" />
-                                </div> --}}
+
                                 </div>
-                            
+
                             <!-- Submit button-->
                             <button class="btn btn-primary" type="submit">Add Incident</button>
                         </form>

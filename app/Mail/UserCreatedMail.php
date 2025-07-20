@@ -2,12 +2,13 @@
 
 namespace App\Mail;
 
+use App\Models\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
 class UserCreatedMail extends Mailable
 // implements ShouldQueue
@@ -20,7 +21,7 @@ class UserCreatedMail extends Mailable
     public $user;
     public $tempPassword;
 
-    public function __construct($user, $tempPassword)
+    public function __construct(User $user, $tempPassword)
     {
         //
         $this->user = $user;
@@ -29,8 +30,12 @@ class UserCreatedMail extends Mailable
 
     public function build()
     {
-        return $this->subject('Your Account Has Been Created')
-                    ->view('layouts.emails.user_created');
+        return $this->subject('Your Account Has Been Approved')
+                    ->view('layouts.emails.user_created')
+                    ->with([
+                        'user' => $this->user,
+                        'tempPassword' => $this->user->temp_password,
+                    ]);
     }
 
     /**

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->text('description');
             $table->enum('priority', ['low', 'medium', 'high', 'critical'])->default('medium');
             $table->enum('status', ['new', 'assigned', 'in_progress', 'resolved', 'closed'])->default('new');
-            $table->timestamp('sla_due_date')->nullable();
+            $table->timestamp('closed_date')->nullable();
             $table->timestamps();
         });
     }

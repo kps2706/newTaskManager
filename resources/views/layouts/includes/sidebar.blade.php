@@ -78,7 +78,7 @@
                 <div class="sidenav-footer-title">{{Auth::user()->name ?? 'Guest'}}</div>
                 <div class="sidenav-footer-subtitle">Role :
                 @php
-                    $role = Auth::user()?->getRoleNames()->first();
+                    $role = Auth::user()->getRoleNames()->first();
                 @endphp
 
                 {{ $role ? ucfirst(str_replace('_', ' ', $role)) : 'No Role' }}

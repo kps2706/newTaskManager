@@ -9,13 +9,16 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Mail\UserCreatedMail;
 use Illuminate\Validation\Rules;
+use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use App\Mail\UserApprovalPendingMail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Auth\Events\Registered;
+use App\Mail\AdminUserApprovalRequestMail;
 
 class RegisteredUserController extends Controller
 {
@@ -49,15 +52,25 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($tempPassword),
-            'force_password_change' => true, // Force password change on first login
+            'temp_password' => $tempPassword,
+            'is_authorized' => false,
+            'force_password_reset' => true, // Force password change on first login
         ]);
 
         // Assign default role if needed
         $user->syncRoles($request['roles'] ?? ['reporter']);
 
+        // Get all users with admin role
+        $admins = User::role('admin')->get();
+
+        foreach ($admins as $admin) {
+            Mail::to($admin->email)->send(new AdminUserApprovalRequestMail($user));
+            Log::info("Mail Send to admin for approval by {$admin->email}");
+        }
+
         try {
-        // 📧 Send mail with temporary password
-            Mail::to($user->email)->send(new UserCreatedMail($user, $tempPassword));
+        // 📧 Send mail with confirmation message
+            Mail::to($user->email)->send(new UserApprovalPendingMail($user));
             Log::info("User creation email sent to {$user->email}");
         } catch (Exception $e) {
             Log::error("Failed to send mail to {$user->email}: " . $e->getMessage());

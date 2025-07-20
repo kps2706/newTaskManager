@@ -3,28 +3,29 @@
 @section('main_content')
 
 <main>
-    <header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4">
-        <div class="container-fluid px-4">
-            <div class="page-header-content">
-                <div class="row align-items-center justify-content-between pt-3">
-                    <div class="col-auto mb-3">
-                        <h1 class="page-header-title">
-                            <div class="page-header-icon"><i data-feather="user"></i></div>
-                            Issue List
-                        </h1>
-                    </div>
-                    <div class="col-12 col-xl-auto mb-3">
-                        <a class="btn btn-sm btn-light text-primary" href="{{route('issue.create')}}">
-                            <i class="me-1" data-feather="user-plus"></i>
-                            Report New Issue
-                        </a>
-                    </div>
-                </div>
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+<div class="container-xl px-4">
+    <div class="page-header-content pt-4">
+        <div class="row align-items-center justify-content-between">
+            <div class="col-auto mt-4">
+                <h1 class="page-header-title">
+                    <div class="page-header-icon"><i data-feather="file"></i></div>
+                    Issues List
+                </h1>
+                <div class="page-header-subtitle">All Issue realetd to project and binded with task are litsted here..</div>
+            </div>
+            <div class="col-12 col-xl-auto mt-4">
+                <a class="btn btn-sm btn-light text-primary" href="{{route('issue.create')}}">
+                    <i class="me-1" data-feather="user-plus"></i>
+                    Report New Issue
+                </a>
             </div>
         </div>
-    </header>
+    </div>
+</div>
+</header>
     <!-- Main page content-->
-    <div class="container-fluid px-4">
+    <div class="container-xl px-4 mt-n10">
         <div class="card">
             <div class="card-body">
                 <table id="datatablesSimple">
@@ -36,7 +37,7 @@
                             <th>Description</th>
                             <th>Priority</th>
                             <th>Status</th>
-                            <th>Due Date</th>
+                            {{-- <th>Close Date</th> --}}
                             <th>Issue Date</th>
                             <th>Actions</th>
                         </tr>
@@ -49,7 +50,7 @@
                             <th>Description</th>
                             <th>Priority</th>
                             <th>Status</th>
-                            <th>Due Date</th>
+                            {{-- <th>Close Date</th> --}}
                             <th>Issue Date</th>
                             <th>Actions</th>
                         </tr>
@@ -94,16 +95,23 @@
                                     {{ $statusLabels[$status]['label'] ?? ucfirst($status) }}
                                 </span>
                             </td>
-                            <td>{{ \Carbon\Carbon::parse($issue->sla_due_date)->format('d-m-Y')}} </td>
+                           {{-- <td>{{ $issue->closed_date ? \Carbon\Carbon::parse($issue->closed_date)->format('d-m-Y') : 'Not Closed' }}</td> --}}
                             <td>{{ \Carbon\Carbon::parse($issue->reported_date)->format('d-m-Y') }}</td>
                             <td>
                              <div class="d-flex align-items-center gap-2">
                                 <a class="btn btn-datatable btn-icon btn-transparent-dark me-2" title="Edit user" href="{{route('issue.edit', $issue->id)}}"><i data-feather="edit"></i></a>
+                                @role('super-admin')
                                 <form action="{{ route('issue.destroy', $issue->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this issue?');">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-datatable btn-icon btn-transparent-dark" title="Delete issue"><i data-feather="trash-2"></i></button>
                                 </form>
+                                @endrole
+                                <a class="btn btn-datatable btn-icon btn-transparent-dark me-2"
+                                title="Add/View Comments"
+                                href="{{ route('issue.show', $issue->id) }}">
+                                    <i data-feather="message-circle"></i>
+                                </a>
                             </div>
                             </td>
                         </tr>

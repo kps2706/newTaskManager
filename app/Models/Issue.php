@@ -16,14 +16,14 @@ class Issue extends Model
         'priority',
         'status',
         'reported_date',
-        'sla_due_date'
+        'closed_date'
     ];
 
     protected $casts = [
     'reported_date' => 'datetime',
-    'sla_due_date' => 'datetime',
+    'closed_date' => 'datetime',
 ]   ;
-    
+
     public function module()
     {
         return $this->belongsTo(Module::class);

@@ -21,7 +21,7 @@ class DashboardController extends Controller
             'totalIncidents'  => Issue::count(),
             'resolvedCount'   => Issue::where('status', 'resolved')->count(),
             'pendingCount'    => Issue::where('status', '!=', 'resolved')->count(),
-            'overdueCount'    => Issue::where('sla_due_date', '<', now())->where('status', '!=', 'resolved')->count(),
+            'overdueCount'    => Issue::where('closed_date', '<', now())->where('status', '!=', 'resolved')->count(),
             'recentIncidents' => Issue::latest()->take(5)->get(),
 
 

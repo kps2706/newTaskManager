@@ -13,7 +13,10 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             //
-             $table->boolean('force_password_reset')->default(true);
+            $table->boolean('is_authorized')->default(false);
+            $table->boolean('is_active')->default(true);
+            $table->boolean('force_password_reset')->default(true);
+            $table->string('temp_password')->nullable();
         });
     }
 

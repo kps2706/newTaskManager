@@ -99,21 +99,17 @@
 
                                 </div>
                                  <div class="col-md-6">
-                                    <label class="small mb-1" for="sla_due_date">SLA Due Date</label>
-                                    <input class="form-control" id="sla_due_date" name="sla_due_date" type="date" value="{{ $issue_for_edit->sla_due_date ? $issue_for_edit->sla_due_date->format('Y-m-d') : '' }}" />
+                                    <label class="small mb-1" for="closed_date">Close Date</label>
+                                    <input class="form-control" id="closed_date" name="closed_date" type="date" value="{{ $issue_for_edit->closed_date ? $issue_for_edit->closed_date->format('Y-m-d') : '' }}" />
                                  </div>
 
                                 </div>
-                                <!-- Form Group (first name)-->
-                                {{-- <div class="row gx-3 mb-3"> --}}
-                                {{-- <div class="col-md-6">
-                                    <label class="small mb-1" for="sla_due_date">SLA Due Date</label>
-                                    <input class="form-control" id="sla_due_date" name="sla_due_date" type="date" placeholder="Enter your password" value="" />
-                                </div> --}}
-                                {{-- </div> --}}
+
 
                             <!-- Submit button-->
-                            <button class="btn btn-primary" type="submit">Add Incident</button>
+                            <button class="btn btn-primary" type="submit">Save</button>
+                            <a href="{{ route('issue.index') }}" class="btn btn-secondary">Cancel</a>
+
                         </form>
                     </div>
                 </div>

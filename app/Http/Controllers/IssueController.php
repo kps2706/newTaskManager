@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Issue;
 use App\Models\Module;
+use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,13 +18,14 @@ class IssueController extends Controller
     {
         //
         $user = Auth::user();
+        $role = Auth::user()->getRoleNames()->first();
 
-        if ($user->role === 'admin') {
+        if ($role === 'admin') {
             $issues = Issue::with('module', 'reporter')->latest()->get();
-        } elseif ($user->role === 'vendor') {
+        } elseif ($role === 'vendor') {
             $issues = Issue::with('module', 'reporter')
                 ->whereHas('module', function ($query) use ($user) {
-                    $query->where('assigned_vendor_id', $user->id);
+                    $query->where('assigned_to', $user->id);
                 })->latest()->get();
         } else {
             $issues = Issue::with('module')->where('reporter_id', $user->id)->latest()->get();
@@ -60,8 +62,7 @@ class IssueController extends Controller
             'description' => $validated['description'],
             'priority' => $validated['priority'],
             'status' => 'new',
-            'reported_date' => $request->reported_date ?? now(), // ✅ add this
-            'sla_due_date' => $request['sla_due_date'],
+            'reported_date' => $request->reported_date ?? now(),
             'module_id' => $validated['module_id'],
             'reporter_id' => Auth::id(),
         ]);
@@ -75,6 +76,8 @@ class IssueController extends Controller
     public function show(string $id)
     {
         //
+        $issue = Issue::with(['comments.user'])->findOrFail($id);
+        return view('layouts.issues.show', compact('issue'));
     }
 
     /**
@@ -102,7 +105,6 @@ class IssueController extends Controller
             'description' => 'required',
             'module_id' => 'required|exists:modules,id',
             'priority' => 'required',
-            'sla_due_date' => 'required|date',
             'reported_date' => 'required|date',
             'assigned_to' => 'nullable|exists:users,id',
             'status' => 'required|string',
@@ -113,7 +115,7 @@ class IssueController extends Controller
             'description'   => $validated['description'],
             'module_id'     => $validated['module_id'],
             'priority'      => $validated['priority'],
-            'sla_due_date'  => $request->sla_due_date,
+            'closed_date'  => $request->closed_date,
             'reported_date' => $request->reported_date,
             'assigned_to'   => $request->assigned_to,
             'status'        => $request->status ?? $issue_for_update->status,

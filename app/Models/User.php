@@ -22,6 +22,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'temp_password',
+        'is_authorized',
+        'is_active',
+        'force_password_reset',
     ];
 
     /**
